@@ -9,7 +9,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import rb.ActionController.Actions;
 import rb.gui.ActionTypeName;
 
 public class ActionController {
@@ -30,6 +29,11 @@ public class ActionController {
 	}
 
 	public ActionPoint getCurrentActionPoint() {
+		if (currentActionPoint == null) {
+			//currentActionPoint = new ActionPoint();
+			//currentActionPoint.addAction(new Actions(0));
+			//currentActionPoint.addPoint(new PointHolder(new Point(0, 0)));
+		}
 		return currentActionPoint;
 	}
 
@@ -51,7 +55,7 @@ public class ActionController {
 		}
 	}
 
-	private void updateChanngeListeners() {
+	public void updateChanngeListeners() {
 		for (ActionControllerChangeListener accl : getChangeListeners()) {
 			accl.updateAll();
 		}
@@ -68,9 +72,11 @@ public class ActionController {
 		private List<PointHolder> points;
 		private List<Actions> actions;
 		private int duration;
+		//private int
 		private Robot robot;
 
 		public void doAction() {
+			actionIndex = 0;
 			while (next()) {
 				try {
 					Thread.sleep(duration);
@@ -85,16 +91,13 @@ public class ActionController {
 			if (getPoints().size() <= getActionIndex()) {
 				return false;
 			}
-			System.out.println("move");
 			getRobot().mouseMove(
 					getPoints().get(getActionIndex()).getPoint().x,
 					getPoints().get(getActionIndex()).getPoint().y);
 			switch (getActions().get(getActionIndex()).getActionType()) {
 			case 0:
-				System.out.println("press");
 				getRobot().mousePress(InputEvent.BUTTON1_DOWN_MASK);
 				getRobot().mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-				getRobot().mouseWheel(-20);
 				break;
 			case 2:
 
@@ -103,7 +106,6 @@ public class ActionController {
 				break;
 			}
 			actionIndex++;
-			System.out.println(actionIndex);
 			return true;
 		}
 

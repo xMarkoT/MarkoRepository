@@ -28,6 +28,10 @@ public class ActionList extends JList<ActionPoint> {
 		addListeners();
 	}
 
+	public void refresh() {
+		((ActionPointListModel)getModel()).refresh(actionController.getAps());
+	}
+
 	private void addListeners() {
 		addMouseListener();
 
@@ -93,6 +97,14 @@ public class ActionList extends JList<ActionPoint> {
 			for (ActionPoint ap : aps) {
 				addElement(ap);
 			}
+		}
+
+		public void refresh(List<ActionPoint> aps) {
+			while (size() > 0) {
+				remove(0);
+			}
+			this.aps = aps;
+			initAps();
 		}
 
 	}
