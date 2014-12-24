@@ -4,16 +4,82 @@ import java.awt.AWTException;
 import java.awt.Point;
 import java.awt.Robot;
 import java.awt.event.InputEvent;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+import rb.ActionController.Actions;
+import rb.gui.ActionTypeName;
+
 public class ActionController {
 
+	private List<ActionPoint> aps;
+	private ActionPoint currentActionPoint;
+	private List<ActionControllerChangeListener> changeListeners;
+
+	public List<ActionPoint> getAps() {
+		if (aps == null) {
+			aps = new ArrayList<ActionController.ActionPoint>();
+		}
+		return aps;
+	}
+
+	public void setAps(List<ActionPoint> aps) {
+		this.aps = aps;
+	}
+
+	public ActionPoint getCurrentActionPoint() {
+		return currentActionPoint;
+	}
+
+	public void setCurrentActionPoint(ActionPoint currentActionPoint) {
+		this.currentActionPoint = currentActionPoint;
+		updateChanngeListeners();
+	}
+
+	public List<ActionControllerChangeListener> getChangeListeners() {
+		if (changeListeners == null) {
+			changeListeners = new ArrayList<ActionControllerChangeListener>();
+		}
+		return changeListeners;
+	}
+
+	public void addChangeListener(ActionControllerChangeListener accl) {
+		if (!getChangeListeners().contains(accl)) {
+			getChangeListeners().add(accl);
+		}
+	}
+
+	private void updateChanngeListeners() {
+		for (ActionControllerChangeListener accl : getChangeListeners()) {
+			accl.updateAll();
+		}
+	}
+
+	public void setChangeListeners(
+			List<ActionControllerChangeListener> changeListeners) {
+		this.changeListeners = changeListeners;
+	}
+
 	public static class ActionPoint {
+		private String name;
 		private int actionIndex = 0;
 		private List<PointHolder> points;
 		private List<Actions> actions;
+		private int duration;
 		private Robot robot;
+
+		public void doAction() {
+			while (next()) {
+				try {
+					Thread.sleep(duration);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
 
 		public boolean next() {
 			if (getPoints().size() <= getActionIndex()) {
@@ -107,6 +173,22 @@ public class ActionController {
 			this.robot = robot;
 		}
 
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public int getDuration() {
+			return duration;
+		}
+
+		public void setDuration(int duration) {
+			this.duration = duration;
+		}
+
 	}
 
 	public static class PointHolder {
@@ -127,8 +209,13 @@ public class ActionController {
 
 	public static class Actions {
 
+		@ActionTypeName(name = "Click", value = 0)
 		public static final int ACTION_CLICK = 0;;
+		@ActionTypeName(name = "Text", value = 1)
 		public static final int ACTION_TEXT = 1;
+		@ActionTypeName(name = "Right Click", value = 3)
+		public static final int ACTION_RIGHT_CLICK = 3;
+		private static List<ActionTypeName> atns;
 		private String text;
 		private int actionType = 0;
 
@@ -150,6 +237,26 @@ public class ActionController {
 
 		public void setActionType(int actionType) {
 			this.actionType = actionType;
+		}
+
+		public static Actions getFromValue(int value) {
+			return new Actions(value);
+		}
+
+		private static List<ActionTypeName> getAtns() {
+			if (atns == null) {
+				atns = new ArrayList<ActionTypeName>();
+				for (Field field : Actions.class.getFields()) {
+					Annotation[] annotations = field.getAnnotations();
+
+					for (Annotation annotation : annotations) {
+						if (annotation instanceof ActionTypeName) {
+							atns.add((ActionTypeName) annotation);
+						}
+					}
+				}
+			}
+			return atns;
 		}
 	}
 }
