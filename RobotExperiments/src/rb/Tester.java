@@ -6,8 +6,14 @@ public class Tester {
 		System.out.println("Saluton Mondo");
 	}
 	
+
 	public void test1(){
 		System.out.println("test1");
+	}
+
+	public void test(){
+		System.out.println("test");
+
 	}
 
 }
