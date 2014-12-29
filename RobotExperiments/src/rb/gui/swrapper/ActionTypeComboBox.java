@@ -13,7 +13,6 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 
 import rb.ActionController;
-import rb.ActionController.ActionPoint;
 import rb.ActionController.Actions;
 import rb.gui.ActionTypeName;
 
