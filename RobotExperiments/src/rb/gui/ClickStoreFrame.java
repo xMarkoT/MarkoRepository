@@ -18,10 +18,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -36,12 +36,13 @@ import rb.ActionControllerChangeListener;
 import rb.MouseLocationListener;
 import rb.MouseLocationThread;
 import rb.RBFileUtil;
-import rb.Tester;
 import rb.gui.swrapper.ActionList;
+import rb.gui.swrapper.ActionList.ActionPointListModel;
 import rb.gui.swrapper.ActionTypeComboBox;
-
-import javax.swing.JButton;
-import javax.swing.SwingConstants;
+import java.awt.BorderLayout;
+import javax.swing.JMenuBar;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 
 public class ClickStoreFrame extends JFrame implements
 		ActionControllerChangeListener, MouseLocationListener {
@@ -68,6 +69,14 @@ public class ClickStoreFrame extends JFrame implements
 	private JButton btnSaveToFile;
 	private JButton btnLoadFromFile;
 	private JButton btnStart;
+	private JPanel westPanel;
+	private JPanel eastPanel;
+	private JButton btnRemove;
+	private JPanel westButtons;
+	private JMenuBar menuBar;
+	private JMenu mnFile;
+	private JMenuItem mntmOpen;
+	private JMenuItem mntmSaveAs;
 
 	/**
 	 * Launch the application.
@@ -97,7 +106,9 @@ public class ClickStoreFrame extends JFrame implements
 	 * Create the frame.
 	 */
 	public ClickStoreFrame(ActionController actionController) {
+		setTitle("Clicker");
 		this.actionController = actionController;
+		setName("Clicker");
 		setSize(1100, 300);
 		actionController.addChangeListener(this);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -105,7 +116,7 @@ public class ClickStoreFrame extends JFrame implements
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
-		contentPane.setLayout(new GridLayout(0, 9, 4, 2));
+		contentPane.setLayout(new GridLayout(0, 2, 4, 2));
 
 		// TODO remove the TestComentWrapper
 		// **test>
@@ -114,95 +125,35 @@ public class ClickStoreFrame extends JFrame implements
 		JScrollPane listPane;
 		;
 
+		westPanel = new JPanel();
+		contentPane.add(westPanel);
+		westPanel.setLayout(new BorderLayout(0, 0));
+
 		actionList = new ActionList(actionController);
 
 		listPane = new JScrollPane(actionList);
+		westPanel.add(listPane, BorderLayout.CENTER);
 
-		contentPane.add(listPane);
-
-		JLabel lblName = new JLabel("Name: ");
-		lblName.setHorizontalTextPosition(JLabel.RIGHT);
-		lblName.setHorizontalAlignment(JLabel.RIGHT);
-		contentPane.add(lblName);
-
-		nameTextField = new JTextField();
-		contentPane.add(nameTextField);
-		nameTextField.setColumns(10);
-
-		JLabel lblActionType = new JLabel("Action Type: ");
-		lblActionType.setHorizontalTextPosition(JLabel.RIGHT);
-		lblActionType.setHorizontalAlignment(JLabel.RIGHT);
-		contentPane.add(lblActionType);
-
-		actionTypeComboBox = new ActionTypeComboBox(actionController);
-		contentPane.add(actionTypeComboBox);
-
-		JLabel lblDurationseconds = new JLabel("Time between actions (mili seconds): ");
-		lblDurationseconds.setHorizontalTextPosition(JLabel.RIGHT);
-		lblDurationseconds.setHorizontalAlignment(JLabel.RIGHT);
-		contentPane.add(lblDurationseconds);
-
-		textFieldDuration = new JTextField();
-		contentPane.add(textFieldDuration);
-		textFieldDuration.setColumns(10);
-
-		lblXmouseposition = new JLabel("xMousePosition");
-		lblXmouseposition.setHorizontalTextPosition(JLabel.CENTER);
-		lblXmouseposition.setHorizontalAlignment(JLabel.CENTER);
-		contentPane.add(lblXmouseposition);
-
-		lblYmouseposition = new JLabel("yMousePosition");
-		lblYmouseposition.setHorizontalTextPosition(JLabel.CENTER);
-		lblYmouseposition.setHorizontalAlignment(JLabel.CENTER);
-		contentPane.add(lblYmouseposition);
-
-		lblX = new JLabel("X: ");
-		lblX.setHorizontalTextPosition(JLabel.RIGHT);
-		lblX.setHorizontalAlignment(JLabel.RIGHT);
-		contentPane.add(lblX);
-
-		xValue = new JTextField();
-		contentPane.add(xValue);
-		xValue.setColumns(10);
-
-		lblY = new JLabel("Y: ");
-		lblY.setHorizontalTextPosition(JLabel.RIGHT);
-		lblY.setHorizontalAlignment(JLabel.RIGHT);
-		contentPane.add(lblY);
-
-		yValue = new JTextField();
-		contentPane.add(yValue);
-		yValue.setColumns(10);
-
-		lblPressspaceBar = new JLabel(
-				"Press ' ctrl + Space Bar' to capture current mouse position.");
-		contentPane.add(lblPressspaceBar);
+		westButtons = new JPanel();
+		westPanel.add(westButtons, BorderLayout.SOUTH);
 
 		btnAdd = new JButton("Add");
-		btnAdd.addActionListener(new ActionListener() {
+		westButtons.add(btnAdd);
 
-			public void actionPerformed(ActionEvent arg0) {
-				ActionPoint ap = new ActionPoint();
-				ap.setName("new "
-						+ ClickStoreFrame.this.actionController.getAps().size());
-
-				List<PointHolder> phs = new ArrayList<ActionController.PointHolder>();
-				phs.add(new PointHolder(new Point(0, 0)));
-				ap.setPoints(phs);
-
-				List<Actions> as = new ArrayList<ActionController.Actions>();
-				as.add(new Actions(0));
-				ap.setActions(as);
-
-				ClickStoreFrame.this.actionController.getAps().add(ap);
-				ClickStoreFrame.this.actionController.setCurrentActionPoint(ap);
-
-			}
-		});
-		btnAdd.setHorizontalAlignment(SwingConstants.RIGHT);
-		contentPane.add(btnAdd);
+		btnRemove = new JButton("Remove");
+		westButtons.add(btnRemove);
 
 		btnUpdate = new JButton("Update");
+		westButtons.add(btnUpdate);
+
+		btnLoadFromFile = new JButton("Load From File...");
+		// westButtons.add(btnLoadFromFile);
+		btnLoadFromFile.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent arg0) {
+				loadAction();
+			}
+		});
 		btnUpdate.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent arg0) {
@@ -225,50 +176,147 @@ public class ClickStoreFrame extends JFrame implements
 
 			}
 		});
-		contentPane.add(btnUpdate);
+		btnRemove.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent arg0) {
+				ActionPointListModel model = (ActionPointListModel) actionList
+						.getModel();
+				// 1. remove from list model
+				model.removeElement(ClickStoreFrame.this.actionController
+						.getCurrentActionPoint());
+				// 2. remove the current AP from the controller
+				ClickStoreFrame.this.actionController.getAps().remove(
+						ClickStoreFrame.this.actionController
+								.getCurrentActionPoint());
+				// set new current
+				if (ClickStoreFrame.this.actionController.getAps() != null
+						&& !ClickStoreFrame.this.actionController.getAps()
+								.isEmpty()) {
+					ClickStoreFrame.this.actionController
+							.setCurrentActionPoint(ClickStoreFrame.this.actionController
+									.getAps().get(0));
+				}
+				ClickStoreFrame.this.updateAll();
+			}
+
+		});
+		btnAdd.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent arg0) {
+				ActionPoint ap = new ActionPoint();
+				ap.setName("new "
+						+ ClickStoreFrame.this.actionController.getAps().size());
+
+				List<PointHolder> phs = new ArrayList<ActionController.PointHolder>();
+				phs.add(new PointHolder(new Point(0, 0)));
+				ap.setPoints(phs);
+
+				List<Actions> as = new ArrayList<ActionController.Actions>();
+				as.add(new Actions(0));
+				ap.setActions(as);
+
+				ClickStoreFrame.this.actionController.getAps().add(ap);
+				ClickStoreFrame.this.actionController.setCurrentActionPoint(ap);
+
+			}
+		});
+
+		eastPanel = new JPanel();
+		contentPane.add(eastPanel);
+		eastPanel.setLayout(new GridLayout(0, 2, 0, 0));
+
+		JLabel lblName = new JLabel("Name: ");
+		eastPanel.add(lblName);
+		lblName.setHorizontalTextPosition(JLabel.RIGHT);
+		lblName.setHorizontalAlignment(JLabel.RIGHT);
+
+		nameTextField = new JTextField();
+		eastPanel.add(nameTextField);
+		nameTextField.setColumns(10);
+
+		JLabel lblActionType = new JLabel("Action Type: ");
+		eastPanel.add(lblActionType);
+		lblActionType.setHorizontalTextPosition(JLabel.RIGHT);
+		lblActionType.setHorizontalAlignment(JLabel.RIGHT);
+
+		actionTypeComboBox = new ActionTypeComboBox(actionController);
+		eastPanel.add(actionTypeComboBox);
+
+		JLabel lblDurationseconds = new JLabel(
+				"Time between actions (mili seconds): ");
+		eastPanel.add(lblDurationseconds);
+		lblDurationseconds.setHorizontalTextPosition(JLabel.RIGHT);
+		lblDurationseconds.setHorizontalAlignment(JLabel.RIGHT);
+
+		textFieldDuration = new JTextField();
+		eastPanel.add(textFieldDuration);
+		textFieldDuration.setColumns(10);
+
+		lblXmouseposition = new JLabel("xMousePosition");
+		eastPanel.add(lblXmouseposition);
+		lblXmouseposition.setHorizontalTextPosition(JLabel.CENTER);
+		lblXmouseposition.setHorizontalAlignment(JLabel.CENTER);
+
+		lblYmouseposition = new JLabel("yMousePosition");
+		eastPanel.add(lblYmouseposition);
+		lblYmouseposition.setHorizontalTextPosition(JLabel.CENTER);
+		lblYmouseposition.setHorizontalAlignment(JLabel.CENTER);
+
+		lblX = new JLabel("X: ");
+		eastPanel.add(lblX);
+		lblX.setHorizontalTextPosition(JLabel.RIGHT);
+		lblX.setHorizontalAlignment(JLabel.RIGHT);
+
+		xValue = new JTextField();
+		eastPanel.add(xValue);
+		xValue.setColumns(10);
+
+		lblY = new JLabel("Y: ");
+		eastPanel.add(lblY);
+		lblY.setHorizontalTextPosition(JLabel.RIGHT);
+		lblY.setHorizontalAlignment(JLabel.RIGHT);
+
+		yValue = new JTextField();
+		eastPanel.add(yValue);
+		yValue.setColumns(10);
+
+		lblPressspaceBar = new JLabel(
+				"Press ' ctrl + Space Bar' to capture current mouse position.");
+		lblPressspaceBar
+				.setToolTipText("Press ' ctrl + Space Bar' to capture current mouse position.");
+		eastPanel.add(lblPressspaceBar);
 
 		btnSaveToFile = new JButton("Save To File...");
-		btnSaveToFile.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent arg0) {
-				JFileChooser fc = new JFileChooser();
-				int result = fc.showSaveDialog(ClickStoreFrame.this);
-				if (result == JFileChooser.APPROVE_OPTION) {
-					File file = fc.getSelectedFile();
-					RBFileUtil.saveToFile(file,
-							ClickStoreFrame.this.actionController);
-				} else {
-
-				}
-
-			}
-		});
-		contentPane.add(btnSaveToFile);
-
-		btnLoadFromFile = new JButton("Load From File...");
-		btnLoadFromFile.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent arg0) {
-				JFileChooser fc = new JFileChooser();
-				int result = fc.showSaveDialog(ClickStoreFrame.this);
-				if (result == JFileChooser.APPROVE_OPTION) {
-					File file = fc.getSelectedFile();
-					List<ActionPoint> loadFromDir = RBFileUtil
-							.loadFromDir(file);
-					ClickStoreFrame.this.actionController.getAps().addAll(
-							loadFromDir);
-					ClickStoreFrame.this.actionController
-							.updateChanngeListeners();
-
-				} else {
-
-				}
-
-			}
-		});
-		contentPane.add(btnLoadFromFile);
+		// eastPanel.add(btnSaveToFile);
 
 		btnStart = new JButton("Start!");
+		eastPanel.add(btnStart);
+
+		menuBar = new JMenuBar();
+		setJMenuBar(menuBar);
+
+		mnFile = new JMenu("File");
+		menuBar.add(mnFile);
+
+		mntmOpen = new JMenuItem("Open...");
+		mntmOpen.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent arg0) {
+				loadAction();
+
+			}
+		});
+		mnFile.add(mntmOpen);
+
+		mntmSaveAs = new JMenuItem("Save as...");
+		mntmSaveAs.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent arg0) {
+				saveAction();
+
+			}
+		});
+		mnFile.add(mntmSaveAs);
 		btnStart.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent arg0) {
@@ -278,7 +326,12 @@ public class ClickStoreFrame extends JFrame implements
 				}
 			}
 		});
-		contentPane.add(btnStart);
+		btnSaveToFile.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent arg0) {
+				saveAction();
+			}
+		});
 
 		addMouseMotionListener(new MouseMotionListener() {
 
@@ -342,6 +395,8 @@ public class ClickStoreFrame extends JFrame implements
 
 			}
 		});
+		setEnabledActionPropertyComponents(false);
+
 	}
 
 	private void addKeyListenerToAllComponents(KeyListener listener,
@@ -376,7 +431,16 @@ public class ClickStoreFrame extends JFrame implements
 
 		}
 		((ActionList) (actionList)).refresh();
+		// System.out.println("size: " + actionList.getModel().getSize());
+		setEnabledActionPropertyComponents(actionList.getModel().getSize() > 0);
 
+	}
+
+	public void setEnabledActionPropertyComponents(boolean enabled) {
+		Component[] components = eastPanel.getComponents();
+		for (Component component : components) {
+			component.setEnabled(enabled);
+		}
 	}
 
 	private void updateActionTypeComboBox() {
@@ -399,6 +463,40 @@ public class ClickStoreFrame extends JFrame implements
 	public void updateLocation(Point p) {
 		lblXmouseposition.setText("Current x: " + p.getX());
 		lblYmouseposition.setText("Current y: " + p.getY());
+
+	}
+
+	private void saveAction() {
+
+		JFileChooser fc = new JFileChooser();
+		int result = fc.showSaveDialog(ClickStoreFrame.this);
+		if (result == JFileChooser.APPROVE_OPTION) {
+			File file = fc.getSelectedFile();
+			RBFileUtil.saveToFile(file, ClickStoreFrame.this.actionController);
+		} else {
+
+		}
+
+	}
+
+	private void loadAction() {
+
+		JFileChooser fc = new JFileChooser();
+		fc.setDialogType(JFileChooser.OPEN_DIALOG);
+		fc.setDialogTitle("Open");
+		fc.setApproveButtonText("Open");
+		// TODO change the button text from "Save" to "Open". (estimated time
+		// 15 mins)
+		int result = fc.showSaveDialog(ClickStoreFrame.this);
+		if (result == JFileChooser.APPROVE_OPTION) {
+			File file = fc.getSelectedFile();
+			List<ActionPoint> loadFromDir = RBFileUtil.loadFromDir(file);
+			ClickStoreFrame.this.actionController.getAps().addAll(loadFromDir);
+			ClickStoreFrame.this.actionController.updateChanngeListeners();
+
+		} else {
+
+		}
 
 	}
 

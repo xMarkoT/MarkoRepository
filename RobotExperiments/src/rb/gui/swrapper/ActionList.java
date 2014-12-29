@@ -61,11 +61,14 @@ public class ActionList extends JList<ActionPoint> {
 			}
 
 			public void mouseClicked(MouseEvent arg0) {
-				ActionPoint ap = getModel().getElementAt(getSelectedIndex());
-				System.out
-						.println("Mouse clicked in list. \nSelected Element is: "
-								+ (ap).getName());
-				ActionList.this.actionController.setCurrentActionPoint(ap);
+				if (getModel().getSize()>0) {
+					ActionPoint ap = getModel().getElementAt(getSelectedIndex());
+					// System.out
+					// .println("Mouse clicked in list. \nSelected Element is: "
+					//				+ (ap).getName());
+					ActionList.this.actionController.setCurrentActionPoint(ap);
+				}
+				
 
 			}
 		});
