@@ -35,6 +35,7 @@ public class WorldFrame extends JFrame {
 	public Model[][] space;
 	private int speed = 200;
 	private AnimationThread animationThread;
+	private SliderPopup sliderPopup;
 
 	/**
 	 * Launch the application.
@@ -71,6 +72,7 @@ public class WorldFrame extends JFrame {
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
 		initSpace(space);
+
 		JMenuBar menuBar = new JMenuBar();
 		JMenu mnPlayback = new JMenu();
 		mnPlayback.setText("Playback");
@@ -98,6 +100,18 @@ public class WorldFrame extends JFrame {
 			}
 		});
 		mnPlayback.add(mnitReset);
+
+		JMenuItem speedMenuItem = new JMenuItem("Speed");
+		speedMenuItem.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent arg0) {
+				sliderPopup = new SliderPopup(WorldFrame.this);
+				sliderPopup.show(WorldFrame.this, 0, 0);
+
+			}
+		});
+		mnPlayback.add(speedMenuItem);
+
 		menuBar.add(mnPlayback);
 
 		setJMenuBar(menuBar);
