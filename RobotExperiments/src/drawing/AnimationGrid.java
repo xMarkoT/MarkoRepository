@@ -5,6 +5,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import javax.swing.JPanel;
@@ -16,6 +18,7 @@ public abstract class AnimationGrid extends JPanel {
 	 */
 	private static final long serialVersionUID = 2107738661861689676L;
 	private TimedRepaint timedRepaint;
+	private Map<String, Boolean> animationOptions = new HashMap<String, Boolean>();
 
 	public AnimationGrid() {
 		setTimedRepaint(new TimedRepaint(this));
@@ -30,6 +33,12 @@ public abstract class AnimationGrid extends JPanel {
 			@Override
 			public void componentResized(ComponentEvent arg0) {
 				repaint();
+				System.out.print("panel Size: " + getSize().width + " "
+						+ getSize().height);
+				System.out.println(" frame Size: "
+						+ getParent().getParent().getParent().getSize().width
+						+ " "
+						+ getParent().getParent().getParent().getSize().height);
 
 			}
 
@@ -59,6 +68,8 @@ public abstract class AnimationGrid extends JPanel {
 
 	public abstract void drawShape(Graphics2D g2d);
 
+	public abstract void optionsChange();
+
 	public TimedRepaint getTimedRepaint() {
 		return timedRepaint;
 	}
@@ -81,6 +92,14 @@ public abstract class AnimationGrid extends JPanel {
 
 		}
 		System.out.println(count);
+	}
+
+	public Map<String, Boolean> getAnimationOptions() {
+		return animationOptions;
+	}
+
+	public void setAnimationOptions(Map<String, Boolean> animationOptions) {
+		this.animationOptions = animationOptions;
 	}
 
 	public static class TimedRepaint implements Runnable {
