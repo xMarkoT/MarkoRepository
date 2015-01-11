@@ -2,6 +2,7 @@ package drawing;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -64,7 +65,7 @@ public class GridCanvas extends JFrame {
 	 */
 	public GridCanvas() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 10, 716, 738);
+		setBounds(100, 0, 716, 759);
 		contentPane = new FibonaciGrid();
 		((AnimationGrid) contentPane).getTimedRepaint().start();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -146,7 +147,12 @@ public class GridCanvas extends JFrame {
 								TimedRepaint timedRepaint2 = ((AnimationGrid) contentPane)
 										.getTimedRepaint();
 								timedRepaint2.start();
+								resetOptions();
 								GridCanvas.this.repaint();
+								contentPane.repaint();
+								Dimension size = getSize();
+								GridCanvas.this.setSize(new Dimension());
+								setSize(size);
 							} catch (InstantiationException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
