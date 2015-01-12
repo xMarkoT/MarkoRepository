@@ -1,5 +1,6 @@
 package drawing;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -19,6 +20,7 @@ public abstract class AnimationGrid extends JPanel {
 	private static final long serialVersionUID = 2107738661861689676L;
 	private TimedRepaint timedRepaint;
 	private Map<String, Boolean> animationOptions = new HashMap<String, Boolean>();
+	protected float alpha;
 
 	public AnimationGrid() {
 		setTimedRepaint(new TimedRepaint(this));
@@ -69,6 +71,11 @@ public abstract class AnimationGrid extends JPanel {
 	public abstract void drawShape(Graphics2D g2d);
 
 	public abstract void optionsChange();
+
+	protected AlphaComposite makeComposite(float alpha) {
+		int type = AlphaComposite.SRC_OVER;
+		return (AlphaComposite.getInstance(type, alpha));
+	}
 
 	public TimedRepaint getTimedRepaint() {
 		return timedRepaint;

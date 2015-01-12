@@ -1,6 +1,5 @@
 package drawing;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -20,14 +19,14 @@ public class FibonaciGrid extends AnimationGrid {
 	private static final String OPTION_TRIANGLES = "Triangles";
 
 	public FibonaciGrid() {
-		getAnimationOptions().put(OPTION_OVALS1, true);
-		getAnimationOptions().put(OPTION_OVALS2, true);
-		getAnimationOptions().put(OPTION_TRIANGLES, true);
+		getAnimationOptions().put(OPTION_OVALS1, false);
+		getAnimationOptions().put(OPTION_OVALS2, false);
+		getAnimationOptions().put(OPTION_TRIANGLES, false);
 	}
 
 	public void drawShapeRandomColor(Graphics2D g2d) {
 
-		float alpha = 0.20f;
+		alpha = 0.20f;
 
 		// g2d.set opacity
 		int width = getWidth();
@@ -292,10 +291,7 @@ public class FibonaciGrid extends AnimationGrid {
 		}
 	}
 
-	private AlphaComposite makeComposite(float alpha) {
-		int type = AlphaComposite.SRC_OVER;
-		return (AlphaComposite.getInstance(type, alpha));
-	}
+	
 
 	@Override
 	public void optionsChange() {
