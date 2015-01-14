@@ -66,7 +66,7 @@ public class GridCanvas extends JFrame {
 	public GridCanvas() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 0, 716, 759);
-		contentPane = new FibonaciGrid();
+		contentPane = new Animations();
 		((AnimationGrid) contentPane).getTimedRepaint().start();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
@@ -96,6 +96,7 @@ public class GridCanvas extends JFrame {
 				public void actionPerformed(ActionEvent arg0) {
 					((AnimationGrid) contentPane).getAnimationOptions().put(
 							option, item.isSelected());
+					((AnimationGrid) contentPane).optionsChange();
 
 				}
 			});

@@ -119,6 +119,7 @@ public abstract class AnimationGrid extends JPanel {
 		}
 
 		boolean delayUp = true;
+		int index = 0;
 
 		@Override
 		public void run() {
@@ -128,16 +129,18 @@ public abstract class AnimationGrid extends JPanel {
 								random.nextInt(254))));
 				getAnimationGrid().repaint();
 				try {
+					setDelay(FGrid.getXFromFibonacci(index));
 					Thread.sleep(getDelay());
 					if (delayUp) {
-						if (getDelay() / 2 >= 2) {
-							setDelay(getDelay() / 2);
+						if (index > 0) {
+							index--;
 						} else {
 							delayUp = false;
 						}
 					} else {
-						if (getDelay() * 2 <= 1024) {
-							setDelay(getDelay() * 2);
+						// 987
+						if (FGrid.getXFromFibonacci(index) < 377) {
+							index++;
 						} else {
 							delayUp = true;
 						}
